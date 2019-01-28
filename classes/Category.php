@@ -2,21 +2,27 @@
 
 // Category.php
 
-class Category {
+class Category extends Db {
 
+    /**
+     * Attributs
+     */
     protected $id;
     protected $title;
     protected $description;
+    protected $bdd;
 
-    //Fonctions magiques
-
+    /**
+     * Méthodes magiques
+     */
     public function __construct($title, $description) {
-            $this->setTitle($title);
-            $this->setDescription($description);
+        $this->setTitle($title);
+        $this->setDescription($description);
     }
 
-    //getters
-
+    /**
+     * Getters
+     */
     public function id() {
         return $this->id;
     }
@@ -29,8 +35,9 @@ class Category {
         return $this->description;
     }
 
-    //setters
-
+    /**
+     * Setters
+     */
     public function setTitle($title) {
         $this->title = $title;
         return $this;
@@ -41,9 +48,21 @@ class Category {
         return $this;
     }
 
-    // Methode
+    /**
+     * Methods
+     */
 
     public function save() {
-        
+
+        $this->dbCreate("Category", [
+            "title"         => $this->title(),
+            "description"   => $this->description()
+        ]);
+
+//        $this->id = $bdd->lastInsertId();
+    }
+
+    public function delete() {
+        //
     }
 }
