@@ -4,7 +4,7 @@
 
 class Actor {
 
-    protected $id;
+    protected $id_actor;
     protected $firstname;
     protected $lastname;
 
@@ -14,8 +14,8 @@ class Actor {
 
     }
 
-    public function id() {
-        return $this->id;
+    public function id_actor() {
+        return $this->id_actor;
     }
 
     public function firstname() {
@@ -37,14 +37,29 @@ class Actor {
     }
 
     public function save() {
+
+        $this->dbCreate("Actor", [
+            "firstname" => $this->firstname(),
+            "lastname" => $this->lastname()
+        ]);
+
+    if ($this->id > 0) {
+            $data["id_actor"] = $this->id();
+            $this->dbUpdate(self::TABLE_NAME, $data);
+            return $this;
+        }
+        $this->id = $this->dbCreate(self::TABLE_NAME, $data);
+        return $this;
+    }
+    public function delete() {
         $data = [
-            'firstname' => $this->firstname,
-            'lastname'  => $this->lastname
+            'id' => $this->id(),
         ];
-
-        return $this->dbCreate($data);
-
+        
+        $this->dbDelete(self::TABLE_NAME, $data);
+        return;
     }
 }
+
 
 

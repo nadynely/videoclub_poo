@@ -10,14 +10,23 @@ class Category extends Db {
     protected $id;
     protected $title;
     protected $description;
-    protected $bdd;
+
+    /**
+     * Constantes
+     */
+
+    const TABLE_NAME = "Category";
 
     /**
      * Méthodes magiques
      */
-    public function __construct($title, $description) {
+    public function __construct($title, $description, $id = null) {
         $this->setTitle($title);
         $this->setDescription($description);
+
+        if (isset($id)) {
+            $this->id = $id;
+        }
     }
 
     /**
@@ -39,6 +48,7 @@ class Category extends Db {
      * Setters
      */
     public function setTitle($title) {
+
         $this->title = $title;
         return $this;
     }
@@ -54,15 +64,49 @@ class Category extends Db {
 
     public function save() {
 
-        $this->dbCreate("Category", [
+        $data = [
             "title"         => $this->title(),
             "description"   => $this->description()
-        ]);
+        ];
 
-//        $this->id = $bdd->lastInsertId();
+        if ($this->id > 0) {
+            $data["id"] = $this->id();
+            $this->dbUpdate(self::TABLE_NAME, $data);
+            return $this;
+        }
+
+        $this->id = $this->dbCreate(self::TABLE_NAME, $data);
+
+        return $this;
     }
 
     public function delete() {
-        //
+
+        $data = [
+            'id' => $this->id(),
+        ];
+        
+        $this->dbDelete(self::TABLE_NAME, $data);
+
+        return;
     }
+
+    public static function findAll() {
+        return Db::dbFind(self::TABLE_NAME);
+    }
+
+    public static function find(array $request) {
+        return Db::dbFind(self::TABLE_NAME, $request);
+    }
+
+    public static function findOne(int $id) {
+        $element = Db::dbFind(self::TABLE_NAME, [
+            ['id_category', '=', $id]
+        ]);
+
+        $cat = new Category($element['title'], $element['description'], $element['id_category']);
+
+        return $cat;
+    }
+    
 }
